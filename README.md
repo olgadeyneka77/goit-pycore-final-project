@@ -1,63 +1,58 @@
-## OmniBrain: Personal Productivity Core 🧠
+## OmniBrain: Центр вашої особистої продуктивності 🧠
 
-OmniBrain is a professional console-based assistant bot designed to manage your contacts and notes efficiently. Built with Python, this application provides a robust system for storing personal information, tracking birthdays, and organizing tasks or ideas with a tag-based note system.
+**OmniBrain** — це професійний консольний бот-помічник, створений для ефективного керування контактами та робочими нотатками. Завдяки розумній системі пошуку та модульній архітектурі, OmniBrain стане надійним "другим мозком" для менеджера, який цінує швидкість та порядок у справах.
 
-### Key Features
+### Основні можливості
 
-* 💾 **Persistent Storage:** Automatically saves and loads all data (contacts and notes) to/from a binary file (`data.pkl`) using the `pickle` module, ensuring no data is lost between sessions.
-* 👥 **Contact Management:** Add new contacts, store multiple phone numbers, email addresses, and physical addresses.
-* 📝 **Smart Notes System:** Create, edit, and delete text-based notes. Organize them using **tags** for quick retrieval and categorization.
-* 🎂 **Birthday Tracking:** Store birthdays and retrieve them with a single command. 
-* 📅 **Smart Reminders:** Automatically calculates congratulation dates for the next 7 days, seamlessly adjusting weekend birthdays to the following Monday.
-* ✅ **Data Validation:** Built-in strict validation for phone numbers (exactly 10 digits) and email formats.
-* 🧱 **Modular Architecture:** Clean code separation into `main.py`, `handlers.py`, `logic.py`, `models.py`, and `validators.py` for maximum maintainability and separation of concerns.
+* 💾 **Постійне зберігання:** Автоматичне збереження та завантаження даних (контактів та нотаток) у файл `data.pkl`.
+* 👥 **Керування контактами:** Зберігання імен, телефонів, email-адрес та дат народження.
+* ⚡ **Omni-пошук (Smart Search):** Використовуйте символ `#` для миттєвого пошуку клієнтів та пов'язаних з ними робочих нотаток одночасно. Більше не потрібно пам'ятати, де лежить інформація!
+* 📝 **Інтелектуальні нотатки:** Робота з нотатками за допомогою тегів для категоризації проєктів, фінансів чи робочих завдань.
+* 🎂 **Трекер днів народжень:** Відстежуйте важливі дати та отримуйте нагадування про привітання на найближчі 7 днів.
+* 🛡 **Валідація даних:** Вбудована перевірка коректності номерів телефонів та форматів email.
 
 ---
 
-### Available Commands
+### Команди OmniBrain
 
-| Category | Command | Description | Example |
+| Категорія | Команда | Опис | Приклад |
 | :--- | :--- | :--- | :--- |
-| **General** | **hello** | Receive a friendly greeting | `hello` |
-| | **close / exit** | Securely save data and terminate | `exit` |
-| **Contacts** | **add** | Add a new contact | `add Hanna 0954656234 email@test.com` |
-| | **change** | Update a contact's phone number | `change Hanna 0954656234 0991234567` |
-| | **phone** | Show all saved phones for a contact | `phone Hanna` |
-| | **all** | Show all contacts | `all` |
-| | **add-birthday**| Set a birthday for a contact | `add-birthday Hanna 10.05.1990` |
-| | **show-birthday**| View a contact's birthday | `show-birthday Hanna` |
-| | **birthdays** | Show upcoming birthdays for next 7 days | `birthdays` |
-| | **delete-contact**| Delete a contact | `delete-contact Hanna` |
-| **Notes** | **add-note** | Add a note with title, content, and tags | `add-note Project Content_here study,ai` |
-| | **find-notes** | Search for notes by tag | `find-notes study` |
-| | **delete-note** | Delete a note by its title | `delete-note Project` |
+| **Пошук** | **#назва** | **Smart Search:** пошук контакту та нотаток за тегом/іменем | `#Hanna` |
+| **Контакти** | **add** | Додати новий контакт | `add Hanna 0951112233 hanna@email.com` |
+| | **all** | Показати всі контакти | `all` |
+| | **delete-contact**| Видалити контакт | `delete-contact Hanna` |
+| **Нотатки** | **add-note** | Додати нотатку (заголовок, зміст, теги) | `add-note Project "План" work,hanna` |
+| | **find-notes** | Пошук нотаток за тегом | `find-notes work` |
+| | **delete-note** | Видалити нотатку | `delete-note Project` |
+| **Дні народження**| **birthdays** | Показати майбутні дні народження | `birthdays` |
 
 ---
 
-### Project Structure
+### Архітектура проєкту
 
-* **`main.py`**: The entry point of the application. Handles data serialization/deserialization, controls the main CLI loop, and routes commands.
-* **`handlers.py`**: Contains command-line interface handlers, argument parsing, and the `@input_error` decorator for safe exception handling.
-* **`models.py`**: Defines core data structures (`AddressBook`, `NoteBook`, `Record`, `Note`, `Field`, etc.).
-* **`logic.py`**: Contains core business logic, including birthday calculations and search algorithms.
-* **`validators.py`**: Logic for ensuring data integrity (phone/email validation).
+OmniBrain побудований за принципом чистої архітектури:
+* `main.py`: Головний цикл бота та маршрутизатор команд.
+* `handlers.py`: Обробка вводу користувача та виклик відповідних логічних функцій.
+* `models.py`: Опис структур даних (`AddressBook`, `NoteBook`, `Record`).
+* `logic.py`: Бізнес-логіка (розрахунок дат, алгоритми пошуку).
+* `validators.py`: Правила валідації даних.
 
 ---
 
-### How to Install and Run
+### Як почати роботу
 
-#### Prerequisites
-* **Python 3.10 or higher** is required (due to the use of `match/case` statements).
+#### Вимоги
+* **Python 3.10+** (необхідно для використання конструкції `match/case`).
 
-#### Setup Instructions
-1. Copy the project files to your local workspace.
-2. Open your terminal.
-3. Navigate to the project directory: 
+#### Встановлення та запуск
+1. Клонуйте або завантажте файли проєкту у робочу папку.
+2. Відкрийте термінал у цій папці.
+3. Запустіть програму:
    ```bash
-   cd your-project-directory
-Run the application:
+   python main.py
+(Для Windows, якщо команда python не спрацювала, спробуйте py main.py).
 
-Bash
-python main.py
+Порада для менеджера: Використовуйте #Ім'яКлієнта як основний інструмент швидкого доступу до всієї інформації про клієнта під час робочих дзвінків!
 
-Note for Windows users: If the command above is not found, try running py main.py.
+
+

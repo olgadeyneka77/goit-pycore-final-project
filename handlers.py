@@ -14,6 +14,35 @@ def input_error(func):
         except KeyError: return "Not found."
     return inner
 
+def smart_search(query, book, notes):
+    query = query.lstrip('#') # прибираємо #
+    results = []
+    
+    # 1. Пошук у контактах (враховуючи регістр)
+    # Ми використовуємо book.data, щоб перебрати всі імена
+    found_contact = None
+    for name in book.data:
+        if name.lower() == query.lower():
+            found_contact = book.data[name]
+            break
+            
+    if found_contact:
+        results.append(f"--- Contact found ---\n{found_contact}")
+        
+    # 2. Пошук у нотатках за тегом
+    note_results = notes.search_notes_by_tag(query)
+    if note_results:
+        results.append(f"--- Notes found with tag '{query}' ---")
+        for n in note_results:
+            results.append(f"   🔹 {n}") # Додаємо відступ для краси
+            
+    # Повертаємо результат або повідомлення, якщо нічого не знайдено
+    if results:
+        return "\n".join(results)
+    else:
+        return f"Nothing found for '{query}' in contacts or notes."
+
+
 # --- Команди для контактів ---
 
 @input_error

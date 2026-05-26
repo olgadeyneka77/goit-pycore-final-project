@@ -12,7 +12,8 @@ from handlers import (
     add_note,           # Нові імпорти
     find_notes_by_tag,
     delete_contact,
-    delete_note 
+    delete_note,
+    smart_search 
 )
 
 # --- Функції серіалізації даних ---
@@ -79,6 +80,7 @@ def main():
                 
             case "all":
                 print(show_all_contacts(book))
+  
 
             # --- Команди нотаток (тепер передаємо об'єкт notes) ---
             case "add-note":
@@ -92,6 +94,11 @@ def main():
                 
             case "delete-note":
                 print(delete_note(args, notes))   
+
+
+            # Додаємо наш новий "розумний" кейс:
+            case cmd if cmd.startswith("#"):
+                print(smart_search(cmd, book, notes))       
                         
             case _:
                 print("Invalid command.")
