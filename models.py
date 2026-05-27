@@ -74,6 +74,28 @@ class Record:
     def add_birthday(self, birthday_value):
         self.birthday = Birthday(birthday_value)
 
+    def to_dict(self):
+        return {
+            "name": self.name.value,
+            "phones": [p.value for p in self.phones],
+            "birthday": self.birthday.value.strftime("%d.%m.%Y") if self.birthday else None,
+            "email": self.email.value if self.email else None,
+            "address": self.address.value if self.address else None,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        record = cls(data["name"])
+        for phone in data.get("phones", []):
+            record.add_phone(phone)
+        if data.get("birthday"):
+            record.add_birthday(data["birthday"])
+        if data.get("email"):
+            record.add_email(data["email"])
+        if data.get("address"):
+            record.add_address(data["address"])
+        return record
+
     def __str__(self):
         res = [f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"]
         if self.email: res.append(f"email: {self.email}")
@@ -93,6 +115,16 @@ class AddressBook(UserDict):
             del self.data[name]
         else:
             raise KeyError(f"Contact {name} not found.")
+
+    def to_dict(self):
+        return {name: record.to_dict() for name, record in self.data.items()}
+
+    @classmethod
+    def from_dict(cls, data):
+        book = cls()
+        for record_data in data.values():
+            book.add_record(Record.from_dict(record_data))
+        return book
         
 
         #Нотатки
@@ -102,6 +134,13 @@ class Note:
         self.title = title.strip()
         self.content = content
         self.tags = tags if tags else []
+
+    def to_dict(self):
+        return {"title": self.title, "content": self.content, "tags": self.tags}
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(data["title"], data["content"], data.get("tags", []))
 
     def __str__(self):
         tags_str = ", ".join(self.tags)
@@ -126,9 +165,19 @@ class NoteBook(UserDict):
             
     def edit_note(self, title, new_content=None, new_tags=None):
         if title in self.data:
-            if new_content: 
+            if new_content:
                 self.data[title].content = new_content
-            if new_tags: 
+            if new_tags:
                 self.data[title].tags = new_tags
         else:
             raise KeyError(f"Note '{title}' not found.")
+
+    def to_dict(self):
+        return {title: note.to_dict() for title, note in self.data.items()}
+
+    @classmethod
+    def from_dict(cls, data):
+        notebook = cls()
+        for note_data in data.values():
+            notebook.add_note(Note.from_dict(note_data))
+        return notebook
