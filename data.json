@@ -1,0 +1,65 @@
+{
+  "contacts": {
+    "Hanna": {
+      "name": "Hanna",
+      "phones": [
+        "0202020202",
+        "0303030303"
+      ],
+      "birthday": null,
+      "email": "hanna@gmail.com",
+      "address": null
+    },
+    "Mariia": {
+      "name": "Mariia",
+      "phones": [
+        "0303030303",
+        "0909090909"
+      ],
+      "birthday": null,
+      "email": "mariia@gmail.com",
+      "address": null
+    },
+    "David": {
+      "name": "David",
+      "phones": [
+        "0203040506"
+      ],
+      "birthday": null,
+      "email": "david@gmail.com",
+      "address": null
+    },
+    "Marian": {
+      "name": "Marian",
+      "phones": [
+        "0099887766"
+      ],
+      "birthday": null,
+      "email": "marian@gmail.com",
+      "address": null
+    }
+  },
+  "notes": {
+    "Project": {
+      "title": "Project",
+      "content": "Plan Create Plan with deadline on 21.12.26,",
+      "tags": [
+        "work"
+      ]
+    },
+    "My": {
+      "title": "My",
+      "content": "new note note, note description,",
+      "tags": [
+        "test"
+      ]
+    },
+    "FinancialGoals,": {
+      "title": "FinancialGoals,",
+      "content": "earn 100K by the end of 2026, personal",
+      "tags": [
+        "finance"
+      ]
+    }
+  }
+}

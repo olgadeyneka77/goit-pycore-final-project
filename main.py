@@ -1,4 +1,4 @@
-import pickle
+import json
 from models import AddressBook, NoteBook
 from handlers import (
     parse_input, 
@@ -33,28 +33,21 @@ from views import (
 
 # --- Функції серіалізації даних ---
 
-def save_data(address_book, note_book, filename="data.pkl"):
-    """Зберігає і контакти, і нотатки в один файл."""
-    with open(filename, "wb") as f:
-        data = {
-            "contacts": address_book,
-            "notes": note_book
-        }
-        pickle.dump(data, f)
+def save_data(address_book, note_book, filename="data.json"):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump({"contacts": address_book.to_dict(), "notes": note_book.to_dict()}, f, ensure_ascii=False, indent=2)
 
-def load_data(filename="data.pkl"):
-    """Завантажує дані. Якщо файл відсутній, створює порожні екземпляри."""
+def load_data(filename="data.json"):
     try:
-        with open(filename, "rb") as f:
-            data = pickle.load(f)
-            return data["contacts"], data["notes"]
-    except (FileNotFoundError, KeyError, EOFError):
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return AddressBook.from_dict(data["contacts"]), NoteBook.from_dict(data["notes"])
+    except (FileNotFoundError, KeyError, ValueError):
         return AddressBook(), NoteBook()
 
 # --- Головна функція ---
 
 def main():
-    # Завантажуємо обидві книги
     book, notes = load_data()
     render_welcome_message()
     command_history = InMemoryHistory()
