@@ -59,16 +59,18 @@ def smart_search(query, book, notes):
 @input_error
 def add_contact(args, book: AddressBook):
     # Очікуємо: add [name] [phone] [email]
-    if len(args) < 3:
-        raise ValueError("Usage: add [name] [phone] [email]")
+    if len(args) < 2:
+        raise ValueError("add [name] [phone] [email_optional]")
     
-    name, phone, email = args
+    name = args[0]
+    phone = args[1]
+    email = args[2] if len(args) > 2 else None
     
-    # 1. Валідація
     check_or_raise(validate_not_empty, name, "Name cannot be empty.")
     check_or_raise(validate_phone, phone, "Invalid phone! Must be 10 digits.")
-    check_or_raise(validate_email, email, "Invalid email format. Please check the address.")
-    
+    if email:
+        check_or_raise(validate_email, email, "Invalid email format. Please check the address.")
+
     # 2. Логіка створення запису
     record = book.find(name)
     if record is None:
@@ -77,7 +79,8 @@ def add_contact(args, book: AddressBook):
     
     # 3. Додавання даних
     record.add_phone(phone)
-    record.add_email(email) # Тепер це безпечно, бо метод існує!
+    if email:
+        record.add_email(email)
     
     return "Contact added."
 
@@ -107,11 +110,31 @@ def show_birthday(args, book: AddressBook):
 
 @input_error
 def birthdays(args, book: AddressBook):
-    # Використовуємо функцію з logic.py (переконайтеся, що імпортували її)
     from logic import get_upcoming_birthdays
     upcoming = get_upcoming_birthdays(book)
-    if not upcoming: return "No birthdays next week." 
-    return upcoming
+    
+    if not upcoming:
+        return []
+        
+    sanitized_birthdays = []
+    
+    for u in upcoming:
+        if isinstance(u, dict):
+            name = u.get('name', 'Unknown')
+            date = u.get('congratulation_date', '')
+        elif hasattr(u, 'name'):
+            name = u.name.value if hasattr(u.name, 'value') else str(u.name)
+            date = str(u.birthday) if hasattr(u, 'birthday') and u.birthday else ''
+        else:
+            name = str(u)
+            date = ''
+            
+        sanitized_birthdays.append({
+            'name': name,
+            'congratulation_date': date
+        })
+        
+    return sanitized_birthdays
 
 @input_error
 def change_contact(args, book: AddressBook):

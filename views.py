@@ -57,9 +57,16 @@ def render_phones(name, phones_list):
     if not phones_list:
         print(f"[yellow]📞 Contact '{name}' has no phone numbers saved.[/yellow]")
         return
-    phones_str = ", ".join(phones_list)
-    print(Panel(f"[bold cyan]{phones_str}[/bold cyan]", title=f"📞 Phones for {name}", expand=False))
-
+    if isinstance(phones_list, list):
+        phones_str = ", ".join([str(p) for p in phones_list])
+    else:
+        phones_str = str(phones_list)
+    
+    print(Panel(
+        f"[bold cyan]{phones_str}[/bold cyan]",
+        title=f"📞 Phones for {name}",
+        expand=False
+    ))
 def render_notes_list(notes_list, title="📝 Found Notes"):
     if not notes_list:
         print("[yellow]🔍 No notes found.[/yellow]")
