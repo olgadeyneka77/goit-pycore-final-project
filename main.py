@@ -8,6 +8,8 @@ from handlers import (
     add_birthday, 
     show_birthday, 
     birthdays,
+    add_address,
+    edit_address,
     show_all_contacts,  
     add_note,           # Нові імпорти
     find_notes_by_tag,
@@ -58,6 +60,12 @@ def main():
 
                 case "add":
                     render_success(add_contact(args, book))
+
+                case "add-address":
+                    render_success(add_address(args, book))
+                
+                case "edit-address":
+                    render_success(edit_address(args, book))
                     
                 case "change":  
                     render_success(change_contact(args, book))
