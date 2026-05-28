@@ -1,5 +1,18 @@
+import json
 from models import Record, AddressBook, NoteBook, Note
 from validators import check_or_raise, validate_phone, validate_email, validate_not_empty
+
+def save_data(address_book, note_book, filename="data.json"):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump({"contacts": address_book.to_dict(), "notes": note_book.to_dict()}, f, ensure_ascii=False, indent=2)
+
+def load_data(filename="data.json"):
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return AddressBook.from_dict(data["contacts"]), NoteBook.from_dict(data["notes"])
+    except (FileNotFoundError, KeyError, ValueError):
+        return AddressBook(), NoteBook()
 
 def parse_input(user_input):
     cmd, *args = user_input.split()
@@ -10,9 +23,12 @@ def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except ValueError as e: raise ValueError(str(e))
-        except IndexError: raise ValueError("Not enough arguments provided for this command.")
-        except KeyError: raise ValueError("Record not found.")
+        except ValueError as e: 
+            raise ValueError(str(e))
+        except IndexError: 
+            raise ValueError("Not enough arguments provided for this command.")
+        except KeyError as e: 
+            raise ValueError(str(e) if str(e) else "Requested item not found.")
     return inner
 
 def smart_search(query, book, notes):
@@ -43,16 +59,18 @@ def smart_search(query, book, notes):
 @input_error
 def add_contact(args, book: AddressBook):
     # Очікуємо: add [name] [phone] [email]
-    if len(args) < 3:
-        raise ValueError("Usage: add [name] [phone] [email]")
+    if len(args) < 2:
+        raise ValueError("add [name] [phone] [email_optional]")
     
-    name, phone, email = args
+    name = args[0]
+    phone = args[1]
+    email = args[2] if len(args) > 2 else None
     
-    # 1. Валідація
     check_or_raise(validate_not_empty, name, "Name cannot be empty.")
     check_or_raise(validate_phone, phone, "Invalid phone! Must be 10 digits.")
-    check_or_raise(validate_email, email, "Invalid email format. Please check the address.")
-    
+    if email:
+        check_or_raise(validate_email, email, "Invalid email format. Please check the address.")
+
     # 2. Логіка створення запису
     record = book.find(name)
     if record is None:
@@ -61,7 +79,8 @@ def add_contact(args, book: AddressBook):
     
     # 3. Додавання даних
     record.add_phone(phone)
-    record.add_email(email) # Тепер це безпечно, бо метод існує!
+    if email:
+        record.add_email(email)
     
     return "Contact added."
 
@@ -91,11 +110,31 @@ def show_birthday(args, book: AddressBook):
 
 @input_error
 def birthdays(args, book: AddressBook):
-    # Використовуємо функцію з logic.py (переконайтеся, що імпортували її)
     from logic import get_upcoming_birthdays
     upcoming = get_upcoming_birthdays(book)
-    if not upcoming: return "No birthdays next week." 
-    return upcoming
+    
+    if not upcoming:
+        return []
+        
+    sanitized_birthdays = []
+    
+    for u in upcoming:
+        if isinstance(u, dict):
+            name = u.get('name', 'Unknown')
+            date = u.get('congratulation_date', '')
+        elif hasattr(u, 'name'):
+            name = u.name.value if hasattr(u.name, 'value') else str(u.name)
+            date = str(u.birthday) if hasattr(u, 'birthday') and u.birthday else ''
+        else:
+            name = str(u)
+            date = ''
+            
+        sanitized_birthdays.append({
+            'name': name,
+            'congratulation_date': date
+        })
+        
+    return sanitized_birthdays
 
 @input_error
 def change_contact(args, book: AddressBook):
@@ -172,6 +211,50 @@ def find_notes_by_tag(args, notes: NoteBook):
 
 @input_error
 def delete_note(args, notes: NoteBook):
+    if not args:
+        raise ValueError("delete-note [title]")
+        
     title = args[0]
+    
+    if title not in notes.data:
+        raise KeyError(f"Note with title '{title}' not found.")
+        
     notes.delete_note(title)
     return f"Note '{title}' deleted."
+
+@input_error
+def add_address(args, book: AddressBook):
+    # Очікуємо: add-address [name] [address...]
+    if len(args) < 2:
+        raise ValueError("Usage: add-address [name] [address]")
+    
+    name = args[0]
+    # Використовуємо " ".join, щоб адреса могла складатися з кількох слів
+    address = " ".join(args[1:])
+    
+    # Валідація: перевіряємо, чи адреса не порожня
+    check_or_raise(validate_not_empty, address, "Address cannot be empty.")
+    
+    record = book.find(name)
+    if record:
+        record.add_address(address)
+        return f"Address added to contact '{name}'."
+    raise KeyError
+
+@input_error
+def edit_address(args, book: AddressBook):
+    # Очікуємо: edit-address [name] [new_address...]
+    if len(args) < 2:
+        raise ValueError("Usage: edit-address [name] [new_address]")
+    
+    name = args[0]
+    new_address = " ".join(args[1:])
+    
+    # Валідація
+    check_or_raise(validate_not_empty, new_address, "Address cannot be empty.")
+    
+    record = book.find(name)
+    if record:
+        record.edit_address(new_address)
+        return f"Address for contact '{name}' updated."
+    raise KeyError

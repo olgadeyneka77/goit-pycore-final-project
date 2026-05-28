@@ -57,9 +57,16 @@ def render_phones(name, phones_list):
     if not phones_list:
         print(f"[yellow]📞 Contact '{name}' has no phone numbers saved.[/yellow]")
         return
-    phones_str = ", ".join(phones_list)
-    print(Panel(f"[bold cyan]{phones_str}[/bold cyan]", title=f"📞 Phones for {name}", expand=False))
-
+    if isinstance(phones_list, list):
+        phones_str = ", ".join([str(p) for p in phones_list])
+    else:
+        phones_str = str(phones_list)
+    
+    print(Panel(
+        f"[bold cyan]{phones_str}[/bold cyan]",
+        title=f"📞 Phones for {name}",
+        expand=False
+    ))
 def render_notes_list(notes_list, title="📝 Found Notes"):
     if not notes_list:
         print("[yellow]🔍 No notes found.[/yellow]")
@@ -67,13 +74,20 @@ def render_notes_list(notes_list, title="📝 Found Notes"):
     
     print(f"\n[bold magenta]{title}[/bold magenta]")
     for note in notes_list:
-        # Припускаємо, що у Note є поля title, content, tags
-        # Якщо у вас інші назви атрибутів — підставте свої
         tags_str = ", ".join(note.tags) if hasattr(note, 'tags') and note.tags else "no tags"
         content = note.content if hasattr(note, 'content') else str(note)
         
-        note_text = f"{content}\n\n[italic gray]🏷️ Tags: {tags_str}[/italic gray]"
-        print(Panel(note_text, title=f"[bold datetime]{note.title}[/bold datetime]", border_style="bright_blue", expand=False))
+        content = " ".join(content.split())
+        
+        note_text = f"{content}\n\n[italic grey50]🏷️ Tags: {tags_str}[/italic grey50]"
+        
+        print(Panel(
+            note_text, 
+            title=f"[bold cyan]{note.title}[/bold cyan]", 
+            border_style="bright_blue", 
+            expand=False,
+            width=50
+        ))
 
 def render_smart_search(search_results):
     contacts = search_results.get("contacts", [])
@@ -89,10 +103,11 @@ def render_smart_search(search_results):
     if notes:
         render_notes_list(notes, title="📝 Smart Search: Matching Notes")
 
-def get_user_input(address_book, command_history):
+def get_user_input(address_book, notes, command_history):
     def get_toolbar_text():
         contacts_count = len(address_book.data) if hasattr(address_book, 'data') else 0
-        return f" [TAB] Hints | 👥 Total Contacts: {contacts_count} | Type 'exit' to quit"
+        notes_count = len(notes.data) if hasattr(notes, 'data') else 0
+        return f" [TAB] Hints | Total 👥 Contacts: {contacts_count} 📝 Notes: {notes_count} | Type 'exit' to quit"
 
     return prompt(
         [('class:prompt', '🤖 assistant ❯ ')],
