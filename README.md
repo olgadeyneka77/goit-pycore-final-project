@@ -21,13 +21,13 @@
 
 | Category | Command | Description | Example |
 |---|---|---|---|
-| Search | `#name` | Smart Search: search contacts and notes by tag/name | `#Hanna` |
+| Search | `#name` | Smart Search: search contacts by name and notes by title or contents | `#Hanna` |
 | Contacts | `add-contact` | Add a new contact (name, phone, email). Contacts can store multiple phone numbers — simply add the same contact with another number and OmniBrain will save both old and new numbers. | `add-contact Hanna 0951112233`<br>`hanna@email.com` |
 |  | `change-contact` | Update a contact’s phone number to the new one | `change Hanna 0951112233 0951112234` |
 |  | `all` | Show all contacts | `all` |
 |  | `add-address` | Adds an address to a contact | `add-address Hanna Stryiska build. 12, apt. 35` |
 |  | `add-birthday` | Add a birthday date | `add-birthday Mariia 21.11.2000` |
-|  | `birthdays` | Upcoming birthdays: displays birthdays within the next 7 days. If a birthday falls on a weekend, it is moved to Monday. | `birthdays` |
+|  | `birthdays` | Upcoming birthdays: displays birthdays within the next n days (n - any number of days). If a birthday falls on a weekend, it is moved to Monday. | `birthdays 10` |
 |  | `delete-contact` | Delete a contact | `delete-contact Mariia` |
 | Notes | `add-note` | Add a note (title, content, tags) | `add-note Project "Plan"`<br>`work,hanna` |
 |  | `find-notes` | Search notes by tag | `find-notes work` |
